@@ -5,7 +5,7 @@ from botstory.middlewares import any, text
 import logging
 import os
 
-logger = logging.getLogger(__name__)
+logger = logging.getLogger('echo-bot')
 logger.setLevel(logging.DEBUG)
 
 
