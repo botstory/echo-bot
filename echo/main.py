@@ -29,21 +29,28 @@ def else_story():
 
 # setup modules
 
-async def init(fake_http_session=None):
+async def init(auto_start=False, fake_http_session=None):
     story.use(fb.FBInterface(
         token=os.environ.get('FB_ACCESS_TOKEN', None),
         webhook=os.environ.get('WEBHOOK_URL_SECRET_PART', '/webhook'),
     ))
-    story.use(aiohttp.AioHttpInterface(
+    http = story.use(aiohttp.AioHttpInterface(
         port=os.environ.get('API_PORT', 8080),
-    )).session = fake_http_session
+        auto_start=auto_start,
+    ))
     story.use(mongodb.MongodbInterface(
         uri=os.environ.get('MONGODB_URL', 'mongo'),
         db_name='tests',
     ))
 
     await story.start()
-    logger.info('start!')
+
+    logger.info('started!')
+
+    # for test purpose
+    http.session = fake_http_session
+
+    return http.app
 
 
 async def stop():
@@ -51,18 +58,18 @@ async def stop():
 
 
 # launch app
-
-def main():
-    # init logging
+def main(forever=True):
     logging.basicConfig(level=logging.DEBUG)
 
     loop = asyncio.get_event_loop()
-    loop.run_until_complete(init())
+    app = loop.run_until_complete(init(auto_start=forever))
+    if forever:
+        story.forever(loop)
 
-    story.forever(loop)
-
-    # TODO: 1) we should support gunicorn
+    return app
 
 
 if __name__ == '__main__':
     main()
+else:
+    app = main(forever=False)
