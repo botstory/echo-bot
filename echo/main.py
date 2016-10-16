@@ -37,8 +37,8 @@ async def init(fake_http_session=None):
     story.use(aiohttp.AioHttpInterface(
         port=os.environ.get('API_PORT', 8080),
     )).session = fake_http_session
-    db = story.use(mongodb.MongodbInterface(
-        uri='mongo',
+    story.use(mongodb.MongodbInterface(
+        uri=os.environ.get('MONGODB_URL', 'mongo'),
         db_name='tests',
     ))
 
