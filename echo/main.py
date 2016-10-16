@@ -1,4 +1,5 @@
 import asyncio
+import botstory
 from botstory import chat, story
 from botstory.integrations import aiohttp, fb, mongodb
 from botstory.middlewares import any, text
@@ -16,7 +17,7 @@ def echo_story():
     @story.part()
     async def echo(message):
         await chat.say('Hi! I just got something from you:', message['user'])
-        await chat.say('> '.format(message['text']['raw']), message['user'])
+        await chat.say('> {}'.format(message['data']['text']['raw']), message['user'])
 
 
 @story.on(receive=any.Any())
@@ -28,21 +29,25 @@ def else_story():
 
 # setup modules
 
-async def init(loop):
+async def init(fake_http_session=None):
     story.use(fb.FBInterface(
         token=os.environ.get('FB_ACCESS_TOKEN', None),
-        webhook=os.environ.get('WEBHOOK_URL_SECRET_PART', '/webhook')
+        webhook=os.environ.get('WEBHOOK_URL_SECRET_PART', '/webhook'),
     ))
     story.use(aiohttp.AioHttpInterface(
-        loop=loop,
         port=os.environ.get('API_PORT', 8080),
-    ))
+    )).session = fake_http_session
     story.use(mongodb.MongodbInterface(
-        uri='db',
+        uri=os.environ.get('MONGODB_URL', 'mongo'),
+        db_name='tests',
     ))
 
     await story.start()
     logger.info('start!')
+
+
+async def stop():
+    await botstory.story.stop()
 
 
 # launch app
@@ -52,7 +57,7 @@ def main():
     logging.basicConfig(level=logging.DEBUG)
 
     loop = asyncio.get_event_loop()
-    loop.run_until_complete(init(loop))
+    loop.run_until_complete(init())
 
     story.forever(loop)
 
