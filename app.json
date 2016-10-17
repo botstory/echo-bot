@@ -1,0 +1,9 @@
+{
+  "name": "echo-bot",
+  "description": "Very simple example of using bot-story framework",
+  "scripts": {},
+  "env": {},
+  "formation": {},
+  "addons": [],
+  "buildpacks": []
+}
