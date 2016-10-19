@@ -31,8 +31,9 @@ def else_story():
 
 async def init(auto_start=True, fake_http_session=None):
     story.use(fb.FBInterface(
-        token=os.environ.get('FB_ACCESS_TOKEN', None),
-        webhook=os.environ.get('WEBHOOK_URL_SECRET_PART', '/webhook'),
+        page_access_token=os.environ.get('FB_ACCESS_TOKEN', None),
+        webhook_url=os.environ.get('FB_WEBHOOK_URL_SECRET_PART', '/webhook'),
+        webhook_token=os.environ.get('FB_WEBHOOK_TOKEN', None),
     ))
     http = story.use(aiohttp.AioHttpInterface(
         port=os.environ.get('API_PORT', 8080),
