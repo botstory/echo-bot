@@ -40,8 +40,8 @@ async def init(auto_start=True, fake_http_session=None):
         auto_start=auto_start,
     ))
     story.use(mongodb.MongodbInterface(
-        uri=os.environ.get('MONGODB_URL', 'mongo'),
-        db_name='tests',
+        uri=os.environ.get('MONGODB_URI', 'mongo'),
+        db_name=os.environ.get('MONGODB_DB_NAME', 'echobot'),
     ))
 
     await story.start()
