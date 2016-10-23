@@ -15,7 +15,7 @@ async def test_text_echo(event_loop):
 
                 # send message from user
                 http = aiohttp.AioHttpInterface()
-                await http.post_raw('http://0.0.0.0:8080/webhook', json={
+                await http.post_raw('http://0.0.0.0:{}/webhook'.format(os.environ.get('API_PORT', 8080)), json={
                     "object": "page",
                     "entry": [{
                         "id": "PAGE_ID",
