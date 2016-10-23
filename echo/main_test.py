@@ -1,5 +1,6 @@
 from botstory.integrations import aiohttp, fb
 from botstory.integrations.tests.fake_server import fake_fb
+import os
 import pytest
 
 from . import main
@@ -14,7 +15,7 @@ async def test_text_echo(event_loop):
 
                 # send message from user
                 http = aiohttp.AioHttpInterface()
-                await http.post_raw('http://localhost:8080/webhook', json={
+                await http.post_raw('http://0.0.0.0:8080/webhook', json={
                     "object": "page",
                     "entry": [{
                         "id": "PAGE_ID",
