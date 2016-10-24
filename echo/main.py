@@ -1,5 +1,4 @@
 import asyncio
-import botstory
 from botstory import chat, story
 from botstory.integrations import aiohttp, fb, mongodb
 from botstory.middlewares import any, text
@@ -23,8 +22,8 @@ def echo_story():
 @story.on(receive=any.Any())
 def else_story():
     @story.part()
-    async def something_else():
-        await chat.say('Hm I don''t know what is it')
+    async def something_else(message):
+        await chat.say('Hm I don''t know what is it', message['user'])
 
 
 # setup modules
@@ -55,7 +54,10 @@ async def init(auto_start=True, fake_http_session=None):
 
 
 async def stop():
-    await botstory.story.stop()
+    await story.stop()
+    # TODO: should be something like
+    # story.clear()
+    story.middlewares = []
 
 
 # launch app
