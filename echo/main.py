@@ -1,5 +1,4 @@
 import asyncio
-import botstory
 from botstory import chat, story
 from botstory.integrations import aiohttp, fb, mongodb
 from botstory.middlewares import any, text
@@ -23,46 +22,55 @@ def echo_story():
 @story.on(receive=any.Any())
 def else_story():
     @story.part()
-    async def something_else():
-        await chat.say('Hm I don''t know what is it')
+    async def something_else(message):
+        await chat.say('Hm I don''t know what is it', message['user'])
 
 
 # setup modules
 
-async def init(fake_http_session=None):
+async def init(auto_start=True, fake_http_session=None):
     story.use(fb.FBInterface(
-        token=os.environ.get('FB_ACCESS_TOKEN', None),
-        webhook=os.environ.get('WEBHOOK_URL_SECRET_PART', '/webhook'),
+        page_access_token=os.environ.get('FB_ACCESS_TOKEN', None),
+        webhook_url='/webhook{}'.format(os.environ.get('FB_WEBHOOK_URL_SECRET_PART', '')),
+        webhook_token=os.environ.get('FB_WEBHOOK_TOKEN', None),
     ))
-    story.use(aiohttp.AioHttpInterface(
+    http = story.use(aiohttp.AioHttpInterface(
         port=os.environ.get('API_PORT', 8080),
-    )).session = fake_http_session
+        auto_start=auto_start,
+    ))
     story.use(mongodb.MongodbInterface(
-        uri=os.environ.get('MONGODB_URL', 'mongo'),
-        db_name='tests',
+        uri=os.environ.get('MONGODB_URI', 'mongo'),
+        db_name=os.environ.get('MONGODB_DB_NAME', 'echobot'),
     ))
 
     await story.start()
-    logger.info('start!')
+
+    logger.info('started!')
+
+    # for test purpose
+    http.session = fake_http_session
+
+    return http.app
 
 
 async def stop():
-    await botstory.story.stop()
+    await story.stop()
+    # TODO: should be something like
+    # story.clear()
+    story.middlewares = []
 
 
 # launch app
-
-def main():
-    # init logging
+def main(forever=True):
     logging.basicConfig(level=logging.DEBUG)
 
     loop = asyncio.get_event_loop()
-    loop.run_until_complete(init())
+    app = loop.run_until_complete(init(auto_start=forever))
+    if forever:
+        story.forever(loop)
 
-    story.forever(loop)
-
-    # TODO: 1) we should support gunicorn
+    return app
 
 
 if __name__ == '__main__':
-    main()
+    main(forever=True)

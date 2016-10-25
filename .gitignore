@@ -90,3 +90,5 @@ ENV/
 
 # IDEA
 .idea
+
+docker-compose.dev.yml

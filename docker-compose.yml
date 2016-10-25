@@ -4,7 +4,9 @@ services:
     image: mongo
   bot:
     build: .
-    command: python ./echo/main.py
+    command: ./scripts/start.sh
+    environment:
+      - PORT=8080
     ports:
       - "80:8080"
     volumes:

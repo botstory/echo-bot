@@ -11,7 +11,8 @@ services:
 
 env:
   DOCKER_COMPOSE_VERSION: 1.8.0
-  MONGODB_URL: 127.0.0.1
+  MONGODB_URI: 127.0.0.1
+  MONGODB_DB_NAME: test
 
 before_install:
   - pip install -r requirements.txt
