@@ -34,20 +34,26 @@ def else_story():
 # setup modules
 
 async def init(auto_start=True, fake_http_session=None):
+    # Interface for communication with FB
     story.use(fb.FBInterface(
         page_access_token=os.environ.get('FB_ACCESS_TOKEN', None),
         webhook_url='/webhook{}'.format(os.environ.get('FB_WEBHOOK_URL_SECRET_PART', '')),
         webhook_token=os.environ.get('FB_WEBHOOK_TOKEN', None),
     ))
+
+    # Interface for HTTP
     http = story.use(aiohttp.AioHttpInterface(
         port=os.environ.get('API_PORT', 8080),
         auto_start=auto_start,
     ))
+
+    # User and Session storage
     story.use(mongodb.MongodbInterface(
         uri=os.environ.get('MONGODB_URI', 'mongo'),
         db_name=os.environ.get('MONGODB_DB_NAME', 'echobot'),
     ))
 
+    # Start bot
     await story.start()
 
     logger.info('started!')
