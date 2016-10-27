@@ -13,8 +13,7 @@ from yarl import URL, quote, unquote
 
 
 def add_to(router, prefix, path, *, name=None, expect_handler=None,
-           chunk_size=256 * 1024, response_factory=StreamResponse,
-           show_index=False, follow_symlinks=False):
+           chunk_size=256 * 1024, response_factory=StreamResponse):
     """Add static files view.
     prefix - url prefix
     path - folder with files
@@ -28,7 +27,6 @@ def add_to(router, prefix, path, *, name=None, expect_handler=None,
                               expect_handler=expect_handler,
                               chunk_size=chunk_size,
                               response_factory=response_factory,
-                              show_index=show_index,
                               )
     router._reg_resource(resource)
     return resource
@@ -46,8 +44,7 @@ class PrefixResource(AbstractResource):
 class StaticResource(PrefixResource):
     def __init__(self, prefix, directory, *, name=None,
                  expect_handler=None, chunk_size=256 * 1024,
-                 response_factory=StreamResponse,
-                 show_index=False):
+                 response_factory=StreamResponse):
         super().__init__(prefix, name=name)
         try:
             directory = Path(directory)
@@ -62,7 +59,6 @@ class StaticResource(PrefixResource):
         self._directory = directory
         self._file_sender = FileSender(resp_factory=response_factory,
                                        chunk_size=chunk_size)
-        self._show_index = show_index
         self._routes = {'GET': ResourceRoute('GET', self._handle, self,
                                              expect_handler=expect_handler),
 
@@ -118,12 +114,9 @@ class StaticResource(PrefixResource):
 
         # on opening a dir, load it's contents if allowed
         if filepath.is_dir():
-            if self._show_index:
-                try:
-                    ret = yield from self._file_sender.send(request, self._directory.joinpath(filename) / 'index.html')
-                except PermissionError:
-                    raise HTTPForbidden()
-            else:
+            try:
+                ret = yield from self._file_sender.send(request, self._directory.joinpath(filename) / 'index.html')
+            except PermissionError:
                 raise HTTPForbidden()
         elif filepath.is_file():
             ret = yield from self._file_sender.send(request, filepath)

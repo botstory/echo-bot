@@ -41,7 +41,7 @@ async def test_index_html_is_default_file(tmp_dir_path, loop, test_client):
 
     # Register global static route:
     # app.router.add_static('/', tmp_dir_path, show_index=True)
-    static_files.add_to(app.router, '/', tmp_dir_path, show_index=True)
+    static_files.add_to(app.router, '/', tmp_dir_path)
     client = await test_client(app)
 
     # Request the root of the static directory.

@@ -61,9 +61,8 @@ async def init(auto_start=True, fake_http_session=None):
     # we should expose index.html directory
 
     static_files.add_to(http.app.router, '/',
-                        path=str(PROJ_ROOT.parent / 'static') + '/',
+                        path=str(PROJ_ROOT.parent / 'static'),
                         name='static',
-                        show_index=True,
                         )
 
     return http.app
