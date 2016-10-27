@@ -4,9 +4,14 @@ from botstory.integrations import aiohttp, fb, mongodb
 from botstory.middlewares import any, text
 import logging
 import os
+import pathlib
+
+from . import static_files
 
 logger = logging.getLogger('echo-bot')
 logger.setLevel(logging.DEBUG)
+
+PROJ_ROOT = pathlib.Path(__file__).parent
 
 
 # define stories
@@ -49,6 +54,17 @@ async def init(auto_start=True, fake_http_session=None):
 
     # for test purpose
     http.session = fake_http_session
+
+    logger.debug('static {}'.format(str(PROJ_ROOT.parent / 'static')))
+
+    # sadly aiohttp doesn't assume that index.html is default name for root page
+    # we should expose index.html directory
+
+    static_files.add_to(http.app.router, '/',
+                        path=str(PROJ_ROOT.parent / 'static') + '/',
+                        name='static',
+                        show_index=True,
+                        )
 
     return http.app
 

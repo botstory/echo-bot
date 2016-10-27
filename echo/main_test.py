@@ -1,3 +1,4 @@
+import asyncio
 from botstory.integrations import aiohttp, fb
 from botstory.integrations.tests.fake_server import fake_fb
 import os
@@ -108,3 +109,18 @@ async def test_should_ignore_like(event_loop):
                 }
             finally:
                 await main.stop()
+
+
+async def test_should_expose_static_content_at_the_root(loop, test_client):
+    asyncio.set_event_loop(loop)
+    try:
+        app = await main.init()
+        client = await test_client(app)
+        # TODO: it looks like bug in aiohttp
+        # because this one doesn't work
+        resp = await client.get('/')
+        # resp = await client.get('/index.html')
+        assert resp.status == 200
+        assert 'My name is Echo.' in await resp.text()
+    finally:
+        await main.stop()
