@@ -1,10 +1,15 @@
 import asyncio
+from botstory import story
 from botstory.integrations import aiohttp, fb
 from botstory.integrations.tests.fake_server import fake_fb
 import os
 import pytest
 
 from . import main
+
+
+def teardown_function():
+    story.clear(clear_library=False)
 
 
 @pytest.mark.asyncio
@@ -39,14 +44,14 @@ async def test_text_echo(event_loop):
                 })
 
                 # receive message from bot
-                assert len(server.history) == 2
-                assert await server.history[0]['request'].json() == {
+                assert len(server.history) == 3
+                assert await server.history[1]['request'].json() == {
                     'message': {
                         'text': 'Hi! I just got something from you:'
                     },
                     'recipient': {'id': 'USER_ID'},
                 }
-                assert await server.history[1]['request'].json() == {
+                assert await server.history[2]['request'].json() == {
                     'message': {
                         'text': '> hello, world!'
                     },
@@ -100,8 +105,8 @@ async def test_should_ignore_like(event_loop):
                 })
 
                 # receive message from bot
-                assert len(server.history) == 1
-                assert await server.history[0]['request'].json() == {
+                assert len(server.history) == 2
+                assert await server.history[1]['request'].json() == {
                     'message': {
                         'text': 'Hm I don''t know what is it'
                     },
@@ -113,14 +118,16 @@ async def test_should_ignore_like(event_loop):
 
 async def test_should_expose_static_content_at_the_root(loop, test_client):
     asyncio.set_event_loop(loop)
-    try:
-        app = await main.init()
-        client = await test_client(app)
-        # TODO: it looks like bug in aiohttp
-        # because this one doesn't work
-        resp = await client.get('/')
-        # resp = await client.get('/index.html')
-        assert resp.status == 200
-        assert 'My name is Echo.' in await resp.text()
-    finally:
-        await main.stop()
+    async with fake_fb.Server(loop) as server:
+        async with server.session() as server_session:
+            try:
+                app = await main.init(fake_http_session=server_session)
+                client = await test_client(app)
+                # TODO: it looks like bug in aiohttp
+                # because this one doesn't work
+                resp = await client.get('/')
+                # resp = await client.get('/index.html')
+                assert resp.status == 200
+                assert 'My name is Echo.' in await resp.text()
+            finally:
+                await main.stop()

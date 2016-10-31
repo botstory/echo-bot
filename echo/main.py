@@ -16,6 +16,13 @@ PROJ_ROOT = pathlib.Path(__file__).parent
 
 # define stories
 
+@story.on_start()
+def on_start():
+    @story.part()
+    async def greetings(message):
+        await chat.say('Hi There! Nice to see you here!', message['user'])
+
+
 @story.on(receive=text.Any())
 def echo_story():
     @story.part()
@@ -35,7 +42,7 @@ def else_story():
 
 async def init(auto_start=True, fake_http_session=None):
     # Interface for communication with FB
-    story.use(fb.FBInterface(
+    fb_interface = story.use(fb.FBInterface(
         page_access_token=os.environ.get('FB_ACCESS_TOKEN', None),
         webhook_url='/webhook{}'.format(os.environ.get('FB_WEBHOOK_URL_SECRET_PART', '')),
         webhook_token=os.environ.get('FB_WEBHOOK_TOKEN', None),
@@ -53,23 +60,22 @@ async def init(auto_start=True, fake_http_session=None):
         db_name=os.environ.get('MONGODB_DB_NAME', 'echobot'),
     ))
 
+    # for test purpose
+    http.session = fake_http_session
+
     # Start bot
     await story.start()
 
     logger.info('started!')
 
-    # for test purpose
-    http.session = fake_http_session
-
     logger.debug('static {}'.format(str(PROJ_ROOT.parent / 'static')))
-
-    # sadly aiohttp doesn't assume that index.html is default name for root page
-    # we should expose index.html directory
 
     static_files.add_to(http.app.router, '/',
                         path=str(PROJ_ROOT.parent / 'static'),
                         name='static',
                         )
+
+    fb_interface.set_greeting_text('it is greeting message {{user_first_name}}!')
 
     return http.app
 
