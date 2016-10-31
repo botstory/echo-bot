@@ -42,7 +42,8 @@ def else_story():
 
 async def init(auto_start=True, fake_http_session=None):
     # Interface for communication with FB
-    fb_interface = story.use(fb.FBInterface(
+    story.use(fb.FBInterface(
+        greeting_text='it is greeting message to {{user_first_name}}!',
         page_access_token=os.environ.get('FB_ACCESS_TOKEN', None),
         webhook_url='/webhook{}'.format(os.environ.get('FB_WEBHOOK_URL_SECRET_PART', '')),
         webhook_token=os.environ.get('FB_WEBHOOK_TOKEN', None),
@@ -74,8 +75,6 @@ async def init(auto_start=True, fake_http_session=None):
                         path=str(PROJ_ROOT.parent / 'static'),
                         name='static',
                         )
-
-    fb_interface.set_greeting_text('it is greeting message {{user_first_name}}!')
 
     return http.app
 

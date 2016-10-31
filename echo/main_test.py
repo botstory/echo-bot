@@ -44,14 +44,14 @@ async def test_text_echo(event_loop):
                 })
 
                 # receive message from bot
-                assert len(server.history) == 3
-                assert await server.history[1]['request'].json() == {
+                assert len(server.history) == 4
+                assert await server.history[-2]['request'].json() == {
                     'message': {
                         'text': 'Hi! I just got something from you:'
                     },
                     'recipient': {'id': 'USER_ID'},
                 }
-                assert await server.history[2]['request'].json() == {
+                assert await server.history[-1]['request'].json() == {
                     'message': {
                         'text': '> hello, world!'
                     },
@@ -105,8 +105,8 @@ async def test_should_ignore_like(event_loop):
                 })
 
                 # receive message from bot
-                assert len(server.history) == 2
-                assert await server.history[1]['request'].json() == {
+                assert len(server.history) == 3
+                assert await server.history[-1]['request'].json() == {
                     'message': {
                         'text': 'Hm I don''t know what is it'
                     },
