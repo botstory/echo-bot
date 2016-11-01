@@ -47,8 +47,8 @@ async def init(auto_start=True, fake_http_session=None):
         page_access_token=os.environ.get('FB_ACCESS_TOKEN', None),
         persistent_menu=[{
             'type': 'postback',
-            'title': 'Do Nothing',
-            'payload': 'DO_NOTHING'
+            'title': 'Monkey Business',
+            'payload': 'MONKEY_BUSINESS'
         }, {
             'type': 'web_url',
             'title': 'Source Code',

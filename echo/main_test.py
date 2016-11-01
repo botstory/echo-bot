@@ -12,6 +12,9 @@ def teardown_function():
     story.clear(clear_library=False)
 
 
+NUM_OF_HTTP_REQUEST_ON_START = 3
+
+
 @pytest.mark.asyncio
 async def test_text_echo(event_loop):
     async with fake_fb.Server(event_loop) as server:
@@ -44,7 +47,7 @@ async def test_text_echo(event_loop):
                 })
 
                 # receive message from bot
-                assert len(server.history) == 4
+                assert len(server.history) == NUM_OF_HTTP_REQUEST_ON_START + 2
                 assert await server.history[-2]['request'].json() == {
                     'message': {
                         'text': 'Hi! I just got something from you:'
@@ -105,7 +108,7 @@ async def test_should_ignore_like(event_loop):
                 })
 
                 # receive message from bot
-                assert len(server.history) == 3
+                assert len(server.history) == NUM_OF_HTTP_REQUEST_ON_START + 1
                 assert await server.history[-1]['request'].json() == {
                     'message': {
                         'text': 'Hm I don''t know what is it'
