@@ -45,6 +45,15 @@ async def init(auto_start=True, fake_http_session=None):
     story.use(fb.FBInterface(
         greeting_text='it is greeting message to {{user_first_name}}!',
         page_access_token=os.environ.get('FB_ACCESS_TOKEN', None),
+        persistent_menu=[{
+            'type': 'postback',
+            'title': 'Do Nothing',
+            'payload': 'DO_NOTHING'
+        }, {
+            'type': 'web_url',
+            'title': 'Source Code',
+            'url': 'https://github.com/hyzhak/bot-story/'
+        }],
         webhook_url='/webhook{}'.format(os.environ.get('FB_WEBHOOK_URL_SECRET_PART', '')),
         webhook_token=os.environ.get('FB_WEBHOOK_TOKEN', None),
     ))
