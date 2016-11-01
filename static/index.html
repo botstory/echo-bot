@@ -18,23 +18,44 @@
     <link rel="icon" type="image/png" sizes="96x96" href="/assets/favicon/favicon-96x96.png">
     <link rel="icon" type="image/png" sizes="16x16" href="/assets/favicon/favicon-16x16.png">
     <link rel="manifest" href="/assets/favicon/manifest.json">
+
     <meta name="msapplication-TileColor" content="#ffffff">
     <meta name="msapplication-TileImage" content="/assets/favicon/ms-icon-144x144.png">
     <meta name="theme-color" content="#ffffff">
 
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+
     <title>Echobot * Story Bot</title>
+
+    <!-- Compiled and minified CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.8/css/materialize.min.css">
+    <link rel="stylesheet" href="assets/main.css">
+
+    <script src="https://code.jquery.com/jquery-3.1.1.min.js"
+            integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8=" crossorigin="anonymous"></script>
+
+    <!-- Compiled and minified JavaScript -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.8/js/materialize.min.js"></script>
 </head>
 <body>
-<img src="assets/echo.story.bot.png" width="300" height="300" alt="echo bot face" title="echo bot">
-<h1>Hello!</h1>
-<p>My name is Echo.</p>
+<header class="head-line">
+    <img src="assets/echo.story.bot.png" width="300" height="300" alt="echo bot face" title="echo bot">
+    <h1>Hello!</h1>
+    <p>My name is Echo.</p>
+    <p>I'm very simple bot -- just answer with same text message.</p>
+</header>
 
-<div class="fb-messengermessageus"
-     messenger_app_id="345865645763384"
-     page_id="211039739329598"
-     color="blue"
-     size="standard">
+<div class="call-to-actions">
+    <div class="fb-messengermessageus"
+         messenger_app_id="345865645763384"
+         page_id="211039739329598"
+         color="blue"
+         size="xlarge">
+    </div>
+    <a class="btn-flat waves-effect waves-light" href="http://github.com/hyzhak/echobot" target="_blank">Sources</a>
+    <a class="btn-flat waves-effect waves-light" href="http://github.com/hyzhak/botstory" target="_blank">Framework</a>
 </div>
+
 
 <script>
     window.fbAsyncInit = function () {
