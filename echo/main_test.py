@@ -12,7 +12,7 @@ def teardown_function():
     story.clear(clear_library=False)
 
 
-NUM_OF_HTTP_REQUEST_ON_START = 3
+NUM_OF_HTTP_REQUEST_ON_START = 6
 
 
 @pytest.mark.asyncio
