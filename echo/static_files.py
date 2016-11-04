@@ -40,6 +40,13 @@ class PrefixResource(AbstractResource):
         self._prefix = quote(prefix, safe='/')
         self._prefix_len = len(self._prefix)
 
+    def add_prefix(self, prefix):
+        assert prefix.startswith('/')
+        assert prefix.endswith('/')
+        assert len(prefix) > 1
+        self._prefix = prefix + self._prefix[1:]
+        self._prefix_len = len(self._prefix)
+
 
 class StaticResource(PrefixResource):
     def __init__(self, prefix, directory, *, name=None,
@@ -81,7 +88,9 @@ class StaticResource(PrefixResource):
                 'prefix': self._prefix}
 
     @asyncio.coroutine
-    def resolve(self, method, path):
+    def resolve(self, request):
+        path = request.rel_url.raw_path
+        method = request.method
         allowed_methods = {'GET', 'HEAD'}
         if not path.startswith(self._prefix):
             return None, set()

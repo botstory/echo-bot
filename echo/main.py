@@ -44,7 +44,7 @@ async def init(auto_start=True, fake_http_session=None):
     # Interface for communication with FB
     story.use(fb.FBInterface(
         greeting_text='it is greeting message to {{user_first_name}}!',
-        page_access_token=os.environ.get('FB_ACCESS_TOKEN', None),
+        page_access_token=os.environ.get('FB_ACCESS_TOKEN', 'TEST_TOKEN'),
         persistent_menu=[{
             'type': 'postback',
             'title': 'Monkey Business',
@@ -73,17 +73,16 @@ async def init(auto_start=True, fake_http_session=None):
     # for test purpose
     http.session = fake_http_session
 
-    # Start bot
-    await story.start()
-
-    logger.info('started!')
-
     logger.debug('static {}'.format(str(PROJ_ROOT.parent / 'static')))
 
     static_files.add_to(http.app.router, '/',
                         path=str(PROJ_ROOT.parent / 'static'),
                         name='static',
                         )
+    # Start bot
+    await story.start()
+
+    logger.info('started!')
 
     return http.app
 
