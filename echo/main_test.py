@@ -119,6 +119,46 @@ async def test_should_ignore_like(event_loop):
                 await main.stop()
 
 
+@pytest.mark.asyncio
+async def test_on_start(event_loop):
+    async with fake_fb.Server(event_loop) as server:
+        async with server.session() as server_session:
+            try:
+                await main.init(fake_http_session=server_session)
+
+                http = aiohttp.AioHttpInterface()
+                await http.post_raw('http://0.0.0.0:{}/webhook'.format(os.environ.get('API_PORT', 8080)), json={
+                    'object': 'page',
+                    'entry': [{
+                        'id': 'PAGE_ID',
+                        'time': 1473204787206,
+                        'messaging': [{
+                            'sender': {
+                                'id': 'USER_ID'
+                            },
+                            'recipient': {
+                                'id': 'PAGE_ID'
+                            },
+                            'timestamp': 1458692752478,
+                            'postback': {
+                                'payload': 'BOT_STORY.PUSH_GET_STARTED_BUTTON'
+                            }
+                        }]
+                    }]
+                })
+
+                # receive message from bot
+                assert len(server.history) > NUM_OF_HTTP_REQUEST_ON_START
+                assert await server.history[-1]['request'].json() == {
+                    'message': {
+                        'text': 'Hi There! Nice to see you here!'
+                    },
+                    'recipient': {'id': 'USER_ID'},
+                }
+            finally:
+                await main.stop()
+
+
 async def test_should_expose_static_content_at_the_root(loop, test_client):
     asyncio.set_event_loop(loop)
     async with fake_fb.Server(loop) as server:
