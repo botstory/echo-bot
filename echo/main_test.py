@@ -1,9 +1,18 @@
+import asyncio
+from botstory import story
 from botstory.integrations import aiohttp, fb
 from botstory.integrations.tests.fake_server import fake_fb
 import os
 import pytest
 
 from . import main
+
+
+def teardown_function():
+    story.clear(clear_library=False)
+
+
+NUM_OF_HTTP_REQUEST_ON_START = 6
 
 
 @pytest.mark.asyncio
@@ -38,14 +47,14 @@ async def test_text_echo(event_loop):
                 })
 
                 # receive message from bot
-                assert len(server.history) == 2
-                assert await server.history[0]['request'].json() == {
+                assert len(server.history) == NUM_OF_HTTP_REQUEST_ON_START + 2
+                assert await server.history[-2]['request'].json() == {
                     'message': {
                         'text': 'Hi! I just got something from you:'
                     },
                     'recipient': {'id': 'USER_ID'},
                 }
-                assert await server.history[1]['request'].json() == {
+                assert await server.history[-1]['request'].json() == {
                     'message': {
                         'text': '> hello, world!'
                     },
@@ -99,12 +108,69 @@ async def test_should_ignore_like(event_loop):
                 })
 
                 # receive message from bot
-                assert len(server.history) == 1
-                assert await server.history[0]['request'].json() == {
+                assert len(server.history) == NUM_OF_HTTP_REQUEST_ON_START + 1
+                assert await server.history[-1]['request'].json() == {
                     'message': {
                         'text': 'Hm I don''t know what is it'
                     },
                     'recipient': {'id': '1034692249977067'},
                 }
+            finally:
+                await main.stop()
+
+
+@pytest.mark.asyncio
+async def test_on_start(event_loop):
+    async with fake_fb.Server(event_loop) as server:
+        async with server.session() as server_session:
+            try:
+                await main.init(fake_http_session=server_session)
+
+                http = aiohttp.AioHttpInterface()
+                await http.post_raw('http://0.0.0.0:{}/webhook'.format(os.environ.get('API_PORT', 8080)), json={
+                    'object': 'page',
+                    'entry': [{
+                        'id': 'PAGE_ID',
+                        'time': 1473204787206,
+                        'messaging': [{
+                            'sender': {
+                                'id': 'USER_ID'
+                            },
+                            'recipient': {
+                                'id': 'PAGE_ID'
+                            },
+                            'timestamp': 1458692752478,
+                            'postback': {
+                                'payload': 'BOT_STORY.PUSH_GET_STARTED_BUTTON'
+                            }
+                        }]
+                    }]
+                })
+
+                # receive message from bot
+                assert len(server.history) > NUM_OF_HTTP_REQUEST_ON_START
+                assert await server.history[-1]['request'].json() == {
+                    'message': {
+                        'text': 'Hi There! Nice to see you here!'
+                    },
+                    'recipient': {'id': 'USER_ID'},
+                }
+            finally:
+                await main.stop()
+
+
+async def test_should_expose_static_content_at_the_root(loop, test_client):
+    asyncio.set_event_loop(loop)
+    async with fake_fb.Server(loop) as server:
+        async with server.session() as server_session:
+            try:
+                app = await main.init(fake_http_session=server_session)
+                client = await test_client(app)
+                # TODO: it looks like bug in aiohttp
+                # because this one doesn't work
+                resp = await client.get('/')
+                # resp = await client.get('/index.html')
+                assert resp.status == 200
+                assert 'My name is Echo.' in await resp.text()
             finally:
                 await main.stop()
