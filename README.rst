@@ -19,7 +19,15 @@ Logic
 
 .. code-block:: python
 
-    # define stories
+    # Define stories
+
+    # User just pressed `get started` button so we can greet him
+    @story.on_start()
+    def on_start():
+        @story.part()
+        async def greetings(message):
+            await chat.say('Hi There! Nice to see you here!', message['user'])
+
 
     # React on any text message
     @story.on(receive=text.Any())
@@ -44,13 +52,27 @@ Init
 
     # Interface for communication with FB
     story.use(fb.FBInterface(
+        # will show on initial screen
+        greeting_text='it is greeting message to {{user_first_name}}!',
+        # you should get on admin panel for the Messenger Product in Token Generation section
         page_access_token='<fb_token>',
+        # menu of the bot that user has access all the time
+        persistent_menu=[{
+            'type': 'postback',
+            'title': 'Monkey Business',
+            'payload': 'MONKEY_BUSINESS'
+        }, {
+            'type': 'web_url',
+            'title': 'Source Code',
+            'url': 'https://github.com/hyzhak/bot-story/'
+        }],
+        # should be the same as in admin panel for the Webhook Product
         webhook_url='/webhook/<secret_string>',
         webhook_token='webhook_token',
     ))
 
     # Interface for HTTP
-    story.use(aiohttp.AioHttpInterface(
+    http = story.use(aiohttp.AioHttpInterface(
         port=8080,
     ))
 
@@ -62,3 +84,9 @@ Init
 
     # Start bot
     await story.start()
+
+    # and run forever
+    story.forever(loop)
+
+    # or you can use gunicorn for an app of http interface
+    app = http.app
