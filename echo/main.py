@@ -64,7 +64,7 @@ async def init(auto_start=True, fake_http_session=None):
         }, {
             'type': 'web_url',
             'title': 'Source Code',
-            'url': 'https://github.com/hyzhak/bot-story/'
+            'url': 'https://github.com/botstory/bot-story/'
         }],
         # should be the same as in admin panel for the Webhook Product
         webhook_url='/webhook{}'.format(os.environ.get('FB_WEBHOOK_URL_SECRET_PART', '')),
