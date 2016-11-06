@@ -92,3 +92,8 @@ ENV/
 .idea
 
 docker-compose.dev.yml
+
+# Deploy
+deploy_key
+deploy_key.pub
+out
