@@ -1,14 +1,14 @@
 Echo-bot
 ========
 
-.. image:: https://travis-ci.org/hyzhak/echo-bot.svg?branch=develop
-    :target: https://travis-ci.org/hyzhak/echo-bot
+.. image:: https://travis-ci.org/botstory/echo-bot.svg?branch=develop
+    :target: https://travis-ci.org/botstory/echo-bot
 
-.. image:: https://coveralls.io/repos/github/hyzhak/echo-bot/badge.svg?branch=feature%2Fcov
-    :target: https://coveralls.io/github/hyzhak/echo-bot?branch=feature%2Fcov
+.. image:: https://coveralls.io/repos/github/botstory/echo-bot/badge.svg?branch=feature%2Fcov
+    :target: https://coveralls.io/github/botstory/echo-bot?branch=feature%2Fcov
 
 
-Very simple example of using `bot-story framework (github.com/hyzhak/bot-story) <https://github.com/hyzhak/bot-story/>`_.
+Very simple example of using `bot-story framework (github.com/botstory/bot-story) <https://github.com/botstory/bot-story/>`_.
 Bot should just replay on received message.
 
 Code
@@ -64,7 +64,7 @@ Init
         }, {
             'type': 'web_url',
             'title': 'Source Code',
-            'url': 'https://github.com/hyzhak/bot-story/'
+            'url': 'https://github.com/botstory/bot-story/'
         }],
         # should be the same as in admin panel for the Webhook Product
         webhook_url='/webhook/<secret_string>',
