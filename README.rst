@@ -4,8 +4,8 @@ Echo-bot
 .. image:: https://travis-ci.org/botstory/echo-bot.svg?branch=develop
     :target: https://travis-ci.org/botstory/echo-bot
 
-.. image:: https://coveralls.io/repos/github/botstory/echo-bot/badge.svg?branch=feature%2Fcov
-    :target: https://coveralls.io/github/botstory/echo-bot?branch=feature%2Fcov
+.. image:: https://coveralls.io/repos/github/botstory/echo-bot/badge.svg?branch=develop
+    :target: https://coveralls.io/github/botstory/echo-bot?branch=develop
 
 
 Very simple example of using `bot-story framework (github.com/botstory/bot-story) <https://github.com/botstory/bot-story/>`_.
