@@ -11,6 +11,10 @@
   color: #0084ff;
 }
 
+.bot-name {
+  font-weight: bold;
+}
+
 .call-to-actions {
   display: flex;
   justify-content: center;
