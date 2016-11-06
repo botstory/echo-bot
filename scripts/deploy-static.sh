@@ -69,7 +69,7 @@ fi
 
 echo "Adding..."
 
-git add .
+git add -A .
 git commit -m "${COMMIT_TITLE}"
 
 echo "Signing..."
