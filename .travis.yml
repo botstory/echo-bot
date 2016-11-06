@@ -10,12 +10,11 @@ services:
   - mongodb
 
 env:
+  COMMIT_AUTHOR_EMAIL: "one.echo.story.bot@gmail.com"
   DOCKER_COMPOSE_VERSION: 1.8.0
+  ENCRYPTION_LABEL: "2e146433b7bc"
   MONGODB_URI: 127.0.0.1
   MONGODB_DB_NAME: test
-  global:
-  - ENCRYPTION_LABEL: "2e146433b7bc"
-  - COMMIT_AUTHOR_EMAIL: "one.echo.story.bot@gmail.com"
 
 before_install:
   - pip install -r requirements.txt
