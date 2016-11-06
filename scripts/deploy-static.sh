@@ -16,6 +16,9 @@ function doCompile {
   ${DIR}/compile-static.sh
 }
 
+# Content of this directory will be deployed
+mkdir -p out
+
 # Pull requests and commits to other branches shouldn't try to deploy, just build to verify
 if [ "$TRAVIS_PULL_REQUEST" != "false" ]; then
     echo "Skipping deploy of pull request; just doing a build."
