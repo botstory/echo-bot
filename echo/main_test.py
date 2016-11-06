@@ -171,6 +171,6 @@ async def test_should_expose_static_content_at_the_root(loop, test_client):
                 resp = await client.get('/')
                 # resp = await client.get('/index.html')
                 assert resp.status == 200
-                assert 'My name is Echo.' in await resp.text()
+                assert 'My name is' in await resp.text()
             finally:
                 await main.stop()
