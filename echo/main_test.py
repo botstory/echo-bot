@@ -151,7 +151,7 @@ async def test_on_start(event_loop):
                 assert len(server.history) > NUM_OF_HTTP_REQUEST_ON_START
                 assert await server.history[-1]['request'].json() == {
                     'message': {
-                        'text': 'Hi There! Nice to see you here!'
+                        'text': 'Lets make the best bot together!'
                     },
                     'recipient': {'id': 'USER_ID'},
                 }

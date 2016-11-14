@@ -24,7 +24,23 @@ def on_start():
     """
     @story.part()
     async def greetings(message):
-        await chat.say('Hi There! Nice to see you here!', message['user'])
+        await chat.say('Hi There! Nice to see you! ', message['user'])
+
+        await chat.say('I''m very simple bot that show basic features of '
+                       'https://github.com/botstory/botstory '
+                       'open source platform.', message['user'])
+
+        await chat.say('You can send me any text message and '
+                       'I will echo it back to you.', message['user'])
+
+        await chat.say('Any other messages will just bounce '
+                       'with trivial answer '
+                       'that I don''t know what is it.', message['user'])
+
+        await chat.say('You can find my source here '
+                       'https://github.com/botstory/echo-bot.', message['user'])
+
+        await chat.say('Lets make the best bot together!', message['user'])
 
 
 @story.on(receive=text.Any())
@@ -54,7 +70,8 @@ async def init(auto_start=True, fake_http_session=None):
     # Interface for communication with FB
     story.use(fb.FBInterface(
         # will show on initial screen
-        greeting_text='it is greeting message to {{user_first_name}}!',
+        greeting_text='Hello dear {{user_first_name}}! '
+                      'I'' m demo bot of BotStory framework.',
         # you should get on admin panel for the Messenger Product in Token Generation section
         page_access_token=os.environ.get('FB_ACCESS_TOKEN', 'TEST_TOKEN'),
         # menu of the bot that user has access all the time
