@@ -1,6 +1,7 @@
 import asyncio
 from botstory import chat, story
 from botstory.integrations import aiohttp, fb, mongodb
+from botstory.integrations.ga import tracker
 from botstory.middlewares import any, text
 import logging
 import os
@@ -81,6 +82,10 @@ async def init(auto_start=True, fake_http_session=None):
     story.use(mongodb.MongodbInterface(
         uri=os.environ.get('MONGODB_URI', 'mongo'),
         db_name=os.environ.get('MONGODB_DB_NAME', 'echobot'),
+    ))
+
+    story.use(tracker.GAStatistics(
+        tracking_id=os.environ.get('GA_ID'),
     ))
 
     # for test purpose
