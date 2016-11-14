@@ -1,6 +1,6 @@
 import asyncio
 from botstory import story
-from botstory.integrations import aiohttp, fb
+from botstory.integrations import aiohttp
 from botstory.integrations.tests.fake_server import fake_fb
 import os
 import pytest
@@ -17,7 +17,7 @@ NUM_OF_HTTP_REQUEST_ON_START = 6
 
 @pytest.mark.asyncio
 async def test_text_echo(event_loop):
-    async with fake_fb.Server(event_loop) as server:
+    async with fake_fb.FakeFacebook(event_loop) as server:
         async with server.session() as server_session:
             try:
                 await main.init(fake_http_session=server_session)
@@ -66,7 +66,7 @@ async def test_text_echo(event_loop):
 
 @pytest.mark.asyncio
 async def test_should_ignore_like(event_loop):
-    async with fake_fb.Server(event_loop) as server:
+    async with fake_fb.FakeFacebook(event_loop) as server:
         async with server.session() as server_session:
             try:
                 await main.init(fake_http_session=server_session)
@@ -121,7 +121,7 @@ async def test_should_ignore_like(event_loop):
 
 @pytest.mark.asyncio
 async def test_on_start(event_loop):
-    async with fake_fb.Server(event_loop) as server:
+    async with fake_fb.FakeFacebook(event_loop) as server:
         async with server.session() as server_session:
             try:
                 await main.init(fake_http_session=server_session)
@@ -161,7 +161,7 @@ async def test_on_start(event_loop):
 
 async def test_should_expose_static_content_at_the_root(loop, test_client):
     asyncio.set_event_loop(loop)
-    async with fake_fb.Server(loop) as server:
+    async with fake_fb.FakeFacebook(loop) as server:
         async with server.session() as server_session:
             try:
                 app = await main.init(fake_http_session=server_session)
