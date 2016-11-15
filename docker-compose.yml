@@ -7,6 +7,7 @@ services:
     command: ./scripts/start.sh
     environment:
       - PORT=8080
+      - GA_ID="UA-86885596-3"
     ports:
       - "80:8080"
     volumes:
