@@ -16,11 +16,19 @@ NUM_OF_HTTP_REQUEST_ON_START = 6
 
 
 @pytest.mark.asyncio
+async def test_setup(event_loop):
+    async with fake_fb.FakeFacebook(event_loop) as server:
+        async with server.session() as server_session:
+            await main.setup(fake_http_session=server_session)
+            assert len(server.history) == 6
+
+
+@pytest.mark.asyncio
 async def test_text_echo(event_loop):
     async with fake_fb.FakeFacebook(event_loop) as server:
         async with server.session() as server_session:
             try:
-                await main.init(fake_http_session=server_session)
+                await main.start(fake_http_session=server_session)
 
                 # send message from user
                 http = aiohttp.AioHttpInterface()
@@ -47,7 +55,7 @@ async def test_text_echo(event_loop):
                 })
 
                 # receive message from bot
-                assert len(server.history) == NUM_OF_HTTP_REQUEST_ON_START + 2
+                assert len(server.history) == 2
                 assert await server.history[-2]['request'].json() == {
                     'message': {
                         'text': 'Hi! I just got something from you:'
@@ -69,7 +77,7 @@ async def test_should_ignore_like(event_loop):
     async with fake_fb.FakeFacebook(event_loop) as server:
         async with server.session() as server_session:
             try:
-                await main.init(fake_http_session=server_session)
+                await main.start(fake_http_session=server_session)
 
                 http = aiohttp.AioHttpInterface()
                 await http.post_raw('http://0.0.0.0:{}/webhook'.format(os.environ.get('API_PORT', 8080)), json={
@@ -108,7 +116,7 @@ async def test_should_ignore_like(event_loop):
                 })
 
                 # receive message from bot
-                assert len(server.history) == NUM_OF_HTTP_REQUEST_ON_START + 1
+                assert len(server.history) == 1
                 assert await server.history[-1]['request'].json() == {
                     'message': {
                         'text': 'Hm I don''t know what is it'
@@ -124,7 +132,7 @@ async def test_on_start(event_loop):
     async with fake_fb.FakeFacebook(event_loop) as server:
         async with server.session() as server_session:
             try:
-                await main.init(fake_http_session=server_session)
+                await main.start(fake_http_session=server_session)
 
                 http = aiohttp.AioHttpInterface()
                 await http.post_raw('http://0.0.0.0:{}/webhook'.format(os.environ.get('API_PORT', 8080)), json={
@@ -148,7 +156,7 @@ async def test_on_start(event_loop):
                 })
 
                 # receive message from bot
-                assert len(server.history) > NUM_OF_HTTP_REQUEST_ON_START
+                assert len(server.history) > 0
                 assert await server.history[-1]['request'].json() == {
                     'message': {
                         'text': 'Lets make the best bot together!'
@@ -164,7 +172,7 @@ async def test_should_expose_static_content_at_the_root(loop, test_client):
     async with fake_fb.FakeFacebook(loop) as server:
         async with server.session() as server_session:
             try:
-                app = await main.init(fake_http_session=server_session)
+                app = await main.start(fake_http_session=server_session)
                 client = await test_client(app)
                 # TODO: it looks like bug in aiohttp
                 # because this one doesn't work
