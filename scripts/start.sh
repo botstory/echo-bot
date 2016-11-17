@@ -1,5 +1,8 @@
 #!/usr/bin/env bash
 
+echo 'PYTHONPATH'
+echo ${PYTHONPATH}
+
 echo "====================================================="
 echo ""
 echo " Setup"
