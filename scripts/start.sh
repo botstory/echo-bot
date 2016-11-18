@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 
-echo 'PYTHONPATH'
+export PYTHONPATH=${PYTHONPATH}:$(pwd)
+
+echo "PYTHONPATH"
 echo ${PYTHONPATH}
 
 echo "====================================================="
@@ -9,7 +11,7 @@ echo " Setup"
 echo ""
 echo "====================================================="
 
-./echo/main.py
+python ./echo/main.py
 
 echo "====================================================="
 echo ""
