@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 import asyncio
 from botstory import chat, story
 from botstory.integrations import aiohttp, fb, mongodb
@@ -6,8 +8,14 @@ from botstory.middlewares import any, text
 import logging
 import os
 import pathlib
+# import sys
 
-from . import static_files
+# Makes able to import local modules
+# PACKAGE_PARENT = '..'
+# SCRIPT_DIR = os.path.dirname(os.path.realpath(os.path.join(os.getcwd(), os.path.expanduser(__file__))))
+# sys.path.append(os.path.normpath(os.path.join(SCRIPT_DIR, PACKAGE_PARENT)))
+
+from echo.static_files_extension import static_files
 
 logger = logging.getLogger('echo-bot')
 logger.setLevel(logging.DEBUG)
@@ -22,6 +30,7 @@ def on_start():
     """
     User just pressed `get started` button so we can greet him
     """
+
     @story.part()
     async def greetings(message):
         await chat.say('Hi There! Nice to see you! ', message['user'])
@@ -48,6 +57,7 @@ def echo_story():
     """
     React on any text message
     """
+
     @story.part()
     async def echo(message):
         await chat.say('Hi! I just got something from you:', message['user'])
@@ -59,6 +69,7 @@ def else_story():
     """
     And all the rest messages as well
     """
+
     @story.part()
     async def something_else(message):
         await chat.say('Hm I don''t know what is it', message['user'])
@@ -66,7 +77,7 @@ def else_story():
 
 # setup modules
 
-async def init(auto_start=True, fake_http_session=None):
+def init(auto_start=True, fake_http_session=None):
     # Interface for communication with FB
     story.use(fb.FBInterface(
         # will show on initial screen
@@ -108,17 +119,27 @@ async def init(auto_start=True, fake_http_session=None):
     # for test purpose
     http.session = fake_http_session
 
+    return http
+
+
+async def setup(fake_http_session=None):
+    logger.info('setup')
+    init(auto_start=False, fake_http_session=fake_http_session)
+    await story.setup()
+
+
+async def start(auto_start=True, fake_http_session=None):
+    http = init(auto_start, fake_http_session)
+
     logger.debug('static {}'.format(str(PROJ_ROOT.parent / 'static')))
 
     static_files.add_to(http.app.router, '/',
                         path=str(PROJ_ROOT.parent / 'static'),
                         name='static',
                         )
-    # Start bot
+    # start bot
     await story.start()
-
-    logger.info('started!')
-
+    logger.info('started')
     return http.app
 
 
@@ -134,7 +155,7 @@ def main(forever=True):
     logging.basicConfig(level=logging.DEBUG)
 
     loop = asyncio.get_event_loop()
-    app = loop.run_until_complete(init(auto_start=forever))
+    app = loop.run_until_complete(start(auto_start=forever))
 
     # and run forever
     if forever:
@@ -145,4 +166,5 @@ def main(forever=True):
 
 
 if __name__ == '__main__':
-    main(forever=True)
+    loop = asyncio.get_event_loop()
+    loop.run_until_complete(setup())
