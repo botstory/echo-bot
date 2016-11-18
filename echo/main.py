@@ -155,7 +155,7 @@ def main(forever=True):
     logging.basicConfig(level=logging.DEBUG)
 
     loop = asyncio.get_event_loop()
-    app = loop.run_until_complete(init(auto_start=forever))
+    app = loop.run_until_complete(start(auto_start=forever))
 
     # and run forever
     if forever:

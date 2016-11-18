@@ -182,3 +182,8 @@ async def test_should_expose_static_content_at_the_root(loop, test_client):
                 assert 'My name is' in await resp.text()
             finally:
                 await main.stop()
+
+
+def test_main():
+    asyncio.set_event_loop(asyncio.new_event_loop())
+    assert main.main(forever=False) is not None
