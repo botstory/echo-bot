@@ -1,4 +1,5 @@
-botstory==0.0.35
+aiohttp-index==0.1
+botstory==0.0.36
 gunicorn==19.6.0
 pytest==3.0.4
 pytest-aiohttp==0.1.2

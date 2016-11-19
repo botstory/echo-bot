@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 
 import asyncio
+from aiohttp_index import IndexMiddleware
+
 from botstory import chat, story
 from botstory.integrations import aiohttp, fb, mongodb
 from botstory.integrations.ga import tracker
@@ -8,14 +10,6 @@ from botstory.middlewares import any, text
 import logging
 import os
 import pathlib
-# import sys
-
-# Makes able to import local modules
-# PACKAGE_PARENT = '..'
-# SCRIPT_DIR = os.path.dirname(os.path.realpath(os.path.join(os.getcwd(), os.path.expanduser(__file__))))
-# sys.path.append(os.path.normpath(os.path.join(SCRIPT_DIR, PACKAGE_PARENT)))
-
-from echo.static_files_extension import static_files
 
 logger = logging.getLogger('echo-bot')
 logger.setLevel(logging.DEBUG)
@@ -104,6 +98,7 @@ def init(auto_start=True, fake_http_session=None):
     http = story.use(aiohttp.AioHttpInterface(
         port=os.environ.get('API_PORT', 8080),
         auto_start=auto_start,
+        middlewares=[IndexMiddleware()],
     ))
 
     # User and Session storage
@@ -133,10 +128,11 @@ async def start(auto_start=True, fake_http_session=None):
 
     logger.debug('static {}'.format(str(PROJ_ROOT.parent / 'static')))
 
-    static_files.add_to(http.app.router, '/',
-                        path=str(PROJ_ROOT.parent / 'static'),
-                        name='static',
-                        )
+    http.app.router.add_static('/',
+                               path=str(PROJ_ROOT.parent / 'static'),
+                               name='static',
+                               )
+
     # start bot
     await story.start()
     logger.info('started')
